@@ -14,13 +14,28 @@ extern LexedVec Lexer::lex(std::string str) {
 
     for(auto it = str.begin(),end = str.end();it < end;++it){
         auto current = *it;
-        if(isspace(current)){
+        if(isspace(current) && temp.kind != STR){
             if(temp.kind != NONE){
                 line->push_back(temp);
                 temp.str.clear();
                 temp.kind = NONE;
             }
             continue;//don't push back this character
+        }else if(isStr(current)){
+            if(temp.kind != STR){
+                if(temp.kind != NONE){
+                    line->push_back(temp);
+                    temp.str.clear();
+                }
+                temp.kind = STR;
+            }else if(temp.str[0] == current && *(it-1) != '\\'){
+                temp.str += current;
+                line->push_back(temp);
+                temp.str.clear();
+                temp.kind = NONE;
+            }
+        }else if(temp.kind == STR){
+            //no work to do
         }else if(isId(current) || (isNum(current) && temp.kind == ID)){// names can be a-z,A-Z or have
             if(temp.kind != ID){
                 if(temp.kind != NONE) {
@@ -81,4 +96,7 @@ extern inline bool Lexer::isOp(char c) {
 }
 extern inline bool Lexer::isEOL(char c) {
     return c == ';';
+}
+extern inline bool Lexer::isStr(char c){
+    return c == '"' || c == '\'';
 }

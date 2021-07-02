@@ -31,6 +31,7 @@ namespace Lexer {
     extern inline bool isNum(char);
     extern inline bool isOp(char);
     extern inline bool isEOL(char);
+    extern inline bool isStr(char);
 }
 
 
