@@ -37,6 +37,8 @@ namespace Lexer {//encapsulation
     extern inline bool isOp(char);//is an operator character
     extern inline bool isEOL(char);//is an end of line character
     extern inline bool isStr(char);//is an string or character marker character
+
+    extern std::string getERR(const std::string&,const Lexed&);
 }
 
 

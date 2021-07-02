@@ -82,7 +82,9 @@ extern LexedVec Lexer::lex(const std::string &str) {
             line = result.end()-1;//go to new line
             continue;
         }else{//the character is unknown
-            throw std::runtime_error("Unknown character = '" + std::string(1,current) + "'");
+            temp.str = current;
+            temp.index = it-str.begin();
+            throw std::runtime_error("Unknown character:\n" + getERR(str,temp));
         }
         temp.str += current;
     }
@@ -111,4 +113,49 @@ extern inline bool Lexer::isEOL(char c) {
 }
 extern inline bool Lexer::isStr(char c){
     return c == '"' || c == '\'';
+}
+
+extern std::string Lexer::getERR(const std::string& str,const Lexed& lexed){
+    std::string result;
+
+    int line = 0;//in which line error is
+    for(auto i = 0;i < lexed.index;++i){//loop does find the number of lines
+        if(str[i] == '\n'){
+            ++line;
+        }
+    }
+
+    int words = 0;//words means any set of characters between two space
+    bool inWord = false;//as you can read
+
+    for(auto i = lexed.index;i < UINT64_MAX && words < 3 && str[i] != '\n';--i){//the loop gets three (two + the error) words (if exist) in the same line before the error
+        if(!inWord){
+            if(!isspace(str[i])){
+                inWord = true;
+            }
+        }else if(isspace(str[i])){
+            ++words;
+            inWord = false;
+        }
+        result = str[i] + result;
+    }
+
+    auto size = result.size();//for number of spaces before the pointer
+
+    words = 0;
+    inWord = false;
+
+    for(auto i = lexed.index+1;i < str.size() && words < 3 && str[i] != '\n';++i){//the loop gets three words (if exist) in the same line after the error
+        if(!inWord){
+            if(!isspace(str[i])){
+                inWord = true;
+            }
+        }else if(isspace(str[i])){
+            ++words;
+            inWord = false;
+        }
+        result += str[i];
+    }
+
+    return result+'\n'+std::string(size-1,' ')+"^ at line "+std::to_string(line);
 }
