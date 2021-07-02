@@ -21,6 +21,7 @@ namespace Lexer {//encapsulation
     struct Lexed{
         std::string str{};
         LexKind kind = NONE;
+        std::string::size_type index = 0;//only for debugging
     };
 
     /*
@@ -29,7 +30,7 @@ namespace Lexer {//encapsulation
     */
     typedef std::vector<std::vector<Lexed>> LexedVec;
 
-    extern LexedVec lex(std::string);//call this for doing lex
+    extern LexedVec lex(const std::string&);//call this for doing lex
 
     extern inline bool isId(char);//is an Identifier character
     extern inline bool isNum(char);//is an number character

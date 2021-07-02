@@ -7,7 +7,7 @@
 
 using Lexer::LexedVec;
 
-extern LexedVec Lexer::lex(std::string str) {
+extern LexedVec Lexer::lex(const std::string &str) {
     LexedVec result{{}};//has size 1
     auto line = result.begin();//points to the first line
     Lexed temp;//holds the element to save into line
@@ -16,6 +16,7 @@ extern LexedVec Lexer::lex(std::string str) {
         auto current = *it;//to avoid dereferencing and improve speed and read ability
         if(isspace(current) && temp.kind != STR){//avoid all of white spaces except in strings
             if(temp.kind != NONE){//push_back and clear temp
+                temp.index = it-str.begin();
                 line->push_back(temp);
                 temp.str.clear();
                 temp.kind = NONE;
@@ -24,12 +25,14 @@ extern LexedVec Lexer::lex(std::string str) {
         }else if(isStr(current)){
             if(temp.kind != STR){//push_back and clear temp
                 if(temp.kind != NONE){
+                    temp.index = it-str.begin();
                     line->push_back(temp);
                     temp.str.clear();
                 }
                 temp.kind = STR;
             }else if(temp.str[0] == current && *(it-1) != '\\'){
                 temp.str += current;//because it usually push in the end of this loop
+                temp.index = it-str.begin();
                 line->push_back(temp);//push_back and clear temp because the string has been ended
                 temp.str.clear();
                 temp.kind = NONE;
@@ -40,6 +43,7 @@ extern LexedVec Lexer::lex(std::string str) {
         }else if(isId(current) || (isNum(current) && temp.kind == ID)){// names can be a-z,A-Z or have
             if(temp.kind != ID){//push_back and clear temp
                 if(temp.kind != NONE) {
+                    temp.index = it-str.begin();
                     line->push_back(temp);
                     temp.str.clear();
                 }
@@ -48,6 +52,7 @@ extern LexedVec Lexer::lex(std::string str) {
         }else if(isNum(current)){
             if(temp.kind != NUM){//push_back and clear temp
                 if(temp.kind != NONE) {
+                    temp.index = it-str.begin();
                     line->push_back(temp);
                     temp.str.clear();
                 }
@@ -56,6 +61,7 @@ extern LexedVec Lexer::lex(std::string str) {
         }else if(isOp(current)){
             if(temp.kind != OP){//push_back and clear temp
                 if(temp.kind != NONE) {
+                    temp.index = it-str.begin();
                     line->push_back(temp);
                     temp.str.clear();
                 }
@@ -63,10 +69,12 @@ extern LexedVec Lexer::lex(std::string str) {
             }
         }else if(isEOL(current)){
             if(temp.kind != NONE){//push_back and clear temp
+                temp.index = it-str.begin();
                 line->push_back(temp);
             }
             temp.str = current;//because it usually push in the end of this loop
             temp.kind = EOL;
+            temp.index = it-str.begin();
             line->push_back(temp);//push_back and clear temp because the line has been ended
             temp.str.clear();
             temp.kind = NONE;
