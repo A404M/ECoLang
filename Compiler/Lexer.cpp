@@ -128,7 +128,7 @@ extern std::string Lexer::getERR(const std::string& str,const Lexed& lexed){
     int words = 0;//words means any set of characters between two space
     bool inWord = false;//as you can read
 
-    for(auto i = lexed.index;i < UINT64_MAX && words < 3 && str[i] != '\n';--i){//the loop gets three (two + the error) words (if exist) in the same line before the error
+    for(auto i = lexed.index;i < str.size()/*it works for any value between range of 0 to str.size()*/ && words < 3 && str[i] != '\n';--i){//the loop gets three (two + the error) words (if exist) in the same line before the error
         if(!inWord){
             if(!isspace(str[i])){
                 inWord = true;
