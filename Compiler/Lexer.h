@@ -8,7 +8,7 @@
 #include <vector>
 #include <string>
 
-namespace Lexer {
+namespace Lexer {//encapsulation
     enum LexKind{
         NONE,
         ID,//Identifier
@@ -23,15 +23,19 @@ namespace Lexer {
         LexKind kind = NONE;
     };
 
+    /*
+     * each element of the first vector is a sentence (or line) of codes
+     * the second vector holds each operator or identifier of the sentence (or line)
+    */
     typedef std::vector<std::vector<Lexed>> LexedVec;
 
-    extern LexedVec lex(std::string);
+    extern LexedVec lex(std::string);//call this for doing lex
 
-    extern inline bool isId(char);
-    extern inline bool isNum(char);
-    extern inline bool isOp(char);
-    extern inline bool isEOL(char);
-    extern inline bool isStr(char);
+    extern inline bool isId(char);//is an Identifier character
+    extern inline bool isNum(char);//is an number character
+    extern inline bool isOp(char);//is an operator character
+    extern inline bool isEOL(char);//is an end of line character
+    extern inline bool isStr(char);//is an string or character marker character
 }
 
 
