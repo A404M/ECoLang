@@ -39,7 +39,7 @@ namespace Lexer {//encapsulation
     extern inline bool isStr(char);//is an string or character marker character
 
     extern std::string getERR(const std::string&,const Lexed&);
-}
+}//end of Lexer
 
 
 #endif //ECOLANG_LEXER_H

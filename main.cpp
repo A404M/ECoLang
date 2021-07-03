@@ -14,7 +14,7 @@ int main() {
             {Lexer::EOL,"EOL"}
     };
     try {
-        auto test = Lexer::lex("Int a=0; String b (= \"hello + world\";");
+        auto test = Lexer::lex("Int a=0; String b = \"hello + world\";");
         for(auto& j : test) {
             for (auto &i : j)
                 cout << "[" << i.str << "," << kinds[i.kind] << "]" << endl;

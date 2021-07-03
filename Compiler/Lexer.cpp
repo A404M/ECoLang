@@ -116,8 +116,6 @@ extern inline bool Lexer::isStr(char c){
 }
 
 extern std::string Lexer::getERR(const std::string& str,const Lexed& lexed){
-    std::string result;
-
     int line = 0;//in which line error is
     for(auto i = 0;i < lexed.index;++i){//loop does find the number of lines
         if(str[i] == '\n'){
@@ -127,8 +125,9 @@ extern std::string Lexer::getERR(const std::string& str,const Lexed& lexed){
 
     int words = 0;//words means any set of characters between two space
     bool inWord = false;//as you can read
+    std::string result,temp;
 
-    for(auto i = lexed.index;i < str.size()/*it works for any value between range of 0 to str.size()*/ && words < 3 && str[i] != '\n';--i){//the loop gets three (two + the error) words (if exist) in the same line before the error
+    for(auto i = lexed.index;i < str.size()/*it works for any value between range of 0 to str.size() cause of i is unsigned*/ && words < 3 && str[i] != '\n';--i){//the loop gets three (two + the error) words (if exist) in the same line before the error
         if(!inWord){
             if(!isspace(str[i])){
                 inWord = true;
@@ -137,8 +136,13 @@ extern std::string Lexer::getERR(const std::string& str,const Lexed& lexed){
             ++words;
             inWord = false;
         }
-        result = str[i] + result;
+        temp += str[i];//temp will be upside down
     }
+
+    for(auto i = temp.size()-1;i < temp.size();--i){
+        result += temp[i];
+    }
+    temp.clear();//no need to temp any more
 
     auto size = result.size();//for number of spaces before the pointer
 
