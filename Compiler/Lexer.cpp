@@ -3,14 +3,13 @@
 //
 
 #include "Lexer.h"
-#include <iostream>
 
-using Lexer::LexedVec;
+Lexer::Lexer(std::string s) : str(std::move(s)) {/*empty*/}
 
-extern LexedVec Lexer::lex(const std::string &str) {
+void Lexer::lex() {
     LexedVec result{{}};//has size 1
     auto line = result.begin();//points to the first line
-    Lexed temp;//holds the element to save into line
+    Lexed temp{"",NONE,NO,};//holds the element to save into line
 
     for(auto it = str.begin(),end = str.end();it < end;++it){
         auto current = *it;//to avoid dereferencing and improve speed and read ability
@@ -49,7 +48,7 @@ extern LexedVec Lexer::lex(const std::string &str) {
                 }
                 temp.kind = ID;
             }
-        }else if(isNum(current)){
+        }else if(isNum(current) || (temp.kind == NUM && current == '.'/*for floating point*/)){
             if(temp.kind != NUM){//push_back and clear temp
                 if(temp.kind != NONE) {
                     temp.index = it-str.begin();
@@ -84,7 +83,7 @@ extern LexedVec Lexer::lex(const std::string &str) {
         }else{//the character is unknown
             temp.str = current;
             temp.index = it-str.begin();
-            throw std::runtime_error("Unknown character:\n" + getERR(str,temp));
+            throw std::runtime_error("Unknown character:\n" + getERR(temp));
         }
         temp.str += current;
     }
@@ -96,26 +95,26 @@ extern LexedVec Lexer::lex(const std::string &str) {
             throw std::runtime_error("The last wasn't ended with a end of line character");
     }
 
-    return result;
+    lexedVec = result;
 }
 
-extern inline bool Lexer::isId(char c) {
+inline bool Lexer::isId(char c) {
     return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
 }
-extern inline bool Lexer::isNum(char c) {
+inline bool Lexer::isNum(char c) {
     return (c >= '0' && c <= '9');
 }
-extern inline bool Lexer::isOp(char c) {
+inline bool Lexer::isOp(char c) {
     return c == '+' || c == '-' || c == '*' || c == '/' || c == '%' || c == '=';
 }
-extern inline bool Lexer::isEOL(char c) {
+inline bool Lexer::isEOL(char c) {
     return c == ';';
 }
-extern inline bool Lexer::isStr(char c){
+inline bool Lexer::isStr(char c){
     return c == '"' || c == '\'';
 }
 
-extern std::string Lexer::getERR(const std::string& str,const Lexed& lexed){
+std::string Lexer::getERR(const Lexed& lexed){
     int line = 0;//in which line error is
     for(auto i = 0;i < lexed.index;++i){//loop does find the number of lines
         if(str[i] == '\n'){
@@ -161,5 +160,21 @@ extern std::string Lexer::getERR(const std::string& str,const Lexed& lexed){
         result += str[i];
     }
 
-    return result+'\n'+std::string(size-1,' ')+"^ at line "+std::to_string(line);
+    return result+'\n'+std::string(size-2,' ')+"^ at line "+std::to_string(line);
+}
+
+Lexer::OpKind Lexer::toOpKind(const std::string &str) {
+    if(str == "NO"){
+        return NO;
+    }else if(str == "LEFT"){
+        return LEFT;
+    }else if(str == "RIGHT"){
+        return RIGHT;
+    }else if(str == "BOTH"){
+        return BOTH;
+    }else if(str == "FUN"){
+        return FUN;
+    }else{
+        throw std::runtime_error("ERR in reading OPERATORS.syntax");//todo
+    }
 }
