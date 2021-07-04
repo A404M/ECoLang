@@ -80,6 +80,7 @@ private:
     static inline bool isOp(char);//is an operator character
     static inline bool isEOL(char);//is an end of line character
     static inline bool isStr(char);//is an string or character marker character
+    static inline bool isBool(char);//is an string or character marker character
 
 public:
     explicit Lexer(std::string);

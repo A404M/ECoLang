@@ -114,6 +114,7 @@ inline bool Lexer::isStr(char c){
     return c == '"' || c == '\'';
 }
 
+
 std::string Lexer::getERR(const Lexed& lexed){
     int line = 0;//in which line error is
     for(auto i = 0;i < lexed.index;++i){//loop does find the number of lines
