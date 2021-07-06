@@ -26,6 +26,8 @@ public:
     ParsedVec pars();
 private:
     void parsLine(std::vector<Parsed>&,std::vector<Lexer::Lexed>&);
+
+    static bool isExist(const std::vector<std::string>&,const std::string&);
 };
 
 

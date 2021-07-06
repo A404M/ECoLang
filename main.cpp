@@ -10,17 +10,17 @@ int main() {
     {//should be done by installer; but for now we create each time
         ofstream opFile{"OPERATORS.syntax"};
         opFile.clear();
-        opFile << "+ RIGHT\n";
-        opFile << "- RIGHT\n";
+        opFile << "+ OP_RIGHT\n";
+        opFile << "- OP_RIGHT\n";
         opFile << "\n";
-        opFile << "* BOTH\n";
-        opFile << "/ BOTH\n";
-        opFile << "% BOTH\n";
+        opFile << "* OP_BOTH\n";
+        opFile << "/ OP_BOTH\n";
+        opFile << "% OP_BOTH\n";
         opFile << "\n";
-        opFile << "+ BOTH\n";
-        opFile << "- BOTH\n";
+        opFile << "+ OP_BOTH\n";
+        opFile << "- OP_BOTH\n";
         opFile << "\n";
-        opFile << "= BOTH";
+        opFile << "= OP_BOTH";
         opFile.close();
     }
 
@@ -34,11 +34,11 @@ int main() {
             {Lexer::HELPER,"HELPER"}
     };
     try {
-        auto test = Parser{Lexer{"i = 0;i = 4*2 + 10/2%4;"}}.pars();
+        auto test = Parser{Lexer{"i = (5+3)*2;"}}.pars();
 
         for(auto& line : test){
             for(auto& i : line){
-                cout << "{[" << i.it.str << "," << kinds[i.it.kind] << "," << i.it.opKind << "]";
+                cout << "{[" << i.it.str << "," << kinds[i.it.kind] << "," << i.it.specialKind << "]";
                 for(auto& operand : i.operands){
                     cout << "{[" << operand.str << "," << kinds[operand.kind] << "]";
                 }

@@ -66,6 +66,15 @@ void Lexer::lex() {
                 }
                 temp.kind = OP;
             }
+        }else if(isBlock(current)){
+            if(temp.kind != BLOCK || temp.str.size() > 1/*blocks only have size 1*/){//push_back and clear temp
+                if(temp.kind != NONE) {
+                    temp.index = it-str.begin();
+                    line->push_back(temp);
+                    temp.str.clear();
+                }
+                temp.kind = BLOCK;
+            }
         }else if(isEOL(current)){
             if(temp.kind != NONE){//push_back and clear temp
                 temp.index = it-str.begin();
@@ -106,6 +115,9 @@ inline bool Lexer::isNum(char c) {
 }
 inline bool Lexer::isOp(char c) {
     return c == '+' || c == '-' || c == '*' || c == '/' || c == '%' || c == '=';
+}
+bool Lexer::isBlock(char c) {
+    return c == '(' || c == ')';
 }
 inline bool Lexer::isEOL(char c) {
     return c == ';';
@@ -163,17 +175,23 @@ std::string Lexer::getERR(const Lexed& lexed){
     return result+'\n'+std::string(size-2,' ')+"^ at line "+std::to_string(line);
 }
 
-Lexer::OpKind Lexer::toOpKind(const std::string &str) {
+Lexer::SpecialKind Lexer::toOpKind(const std::string &str) {
     if(str == "NO"){
         return NO;
-    }else if(str == "LEFT"){
-        return LEFT;
-    }else if(str == "RIGHT"){
-        return RIGHT;
-    }else if(str == "BOTH"){
-        return BOTH;
+    }else if(str == "OP_LEFT"){
+        return OP_LEFT;
+    }else if(str == "OP_RIGHT"){
+        return OP_RIGHT;
+    }else if(str == "OP_BOTH"){
+        return OP_BOTH;
     }else if(str == "FUN"){
         return FUN;
+    }else if(str == "CLASS"){
+        return CLASS;
+    }else if(str == "VAR"){
+        return VAR;
+    }else if(str == "KEYWORD"){
+        return KEYWORD;
     }else{
         throw std::runtime_error("ERR in reading OPERATORS.syntax");//todo
     }
